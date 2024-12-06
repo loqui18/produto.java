@@ -163,3 +163,4 @@ public class Estoque {
 
         System.out.println("Total Geral:  R$ " + totalGeral);
     }
+}
