@@ -1,7 +1,32 @@
-// Estoque.java
 import java.util.*;
 
+class Produto {
+    String nome;
+    int quantidade;
+    double precoUnitario;
+    String categoria;
+    int qtdMinima;
+
+    public Produto(String nome, int quantidade, double precoUnitario, String categoria, int qtdMinima) {
+        this.nome = nome;
+        this.quantidade = quantidade;
+        this.precoUnitario = precoUnitario;
+        this.categoria = categoria;
+        this.qtdMinima = qtdMinima;
+    }
+
+    public double calcularSubtotal() {
+        return quantidade * precoUnitario;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " - " + quantidade + " - " + precoUnitario;
+    }
+}
+
 public class Estoque {
+
     static List<Produto> produtos = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -55,7 +80,6 @@ public class Estoque {
         scanner.close();
     }
 
-    // Métodos do menu (cadastrarProduto, listarProdutos, etc.) permanecem iguais
     public static void cadastrarProduto(Scanner scanner) {
         System.out.print("Nome do produto:  ");
         String nome = scanner.nextLine();
