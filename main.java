@@ -1,6 +1,5 @@
 import java.util.*;
 
-// Classe Produto
 class Produto {
     String nome;
     int quantidade;
@@ -26,8 +25,8 @@ class Produto {
     }
 }
 
-// Classe Estoque
 public class Estoque {
+
     static List<Produto> produtos = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -35,7 +34,7 @@ public class Estoque {
         int opcao;
 
         do {
-            System.out.println("\nMenu: ");
+            System.out.println("\nMenu:");
             System.out.println("1 - Cadastrar produto");
             System.out.println("2 - Listar produtos");
             System.out.println("3 - Filtrar por categoria");
@@ -49,33 +48,15 @@ public class Estoque {
             scanner.nextLine(); // Limpa o buffer
 
             switch (opcao) {
-                case 1:
-                    cadastrarProduto(scanner);
-                    break;
-                case 2:
-                    listarProdutos();
-                    break;
-                case 3:
-                    filtrarPorCategoria(scanner);
-                    break;
-                case 4:
-                    ordenarPorCategoria();
-                    break;
-                case 5:
-                    removerProduto(scanner);
-                    break;
-                case 6:
-                    atualizarPreco(scanner);
-                    break;
-                case 7:
-                    listarComSubtotalPorCategoria();
-                    break;
-                case 0:
-                    System.out.println("Encerrando...");
-                    break;
-                default:
-                    System.out.println("Opção inválida.");
-                    break;
+                case 1 -> cadastrarProduto(scanner);
+                case 2 -> listarProdutos();
+                case 3 -> filtrarPorCategoria(scanner);
+                case 4 -> ordenarPorCategoria();
+                case 5 -> removerProduto(scanner);
+                case 6 -> atualizarPreco(scanner);
+                case 7 -> listarComSubtotalPorCategoria();
+                case 0 -> System.out.println("Encerrando...");
+                default -> System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
         scanner.close();
@@ -103,8 +84,10 @@ public class Estoque {
             System.out.println("Nenhum produto cadastrado.");
             return;
         }
-        System.out.println("\nLista de Produtos: ");
-        produtos.forEach(System.out::println);
+        System.out.println("\nLista de Produtos:");
+        for (Produto produto : produtos) {
+            System.out.println(produto);
+        }
     }
 
     public static void filtrarPorCategoria(Scanner scanner) {
@@ -130,14 +113,15 @@ public class Estoque {
     public static void atualizarPreco(Scanner scanner) {
         System.out.print("Digite o nome do produto para atualizar o preço: ");
         String nome = scanner.nextLine();
-        produtos.stream()
-                .filter(p -> p.nome.equalsIgnoreCase(nome))
-                .findFirst()
-                .ifPresentOrElse(p -> {
-                    System.out.print("Novo preço: ");
-                    p.precoUnitario = scanner.nextDouble();
-                    System.out.println("Preço atualizado com sucesso!");
-                }, () -> System.out.println("Produto não encontrado."));
+        for (Produto produto : produtos) {
+            if (produto.nome.equalsIgnoreCase(nome)) {
+                System.out.print("Novo preço: ");
+                produto.precoUnitario = scanner.nextDouble();
+                System.out.println("Preço atualizado com sucesso!");
+                return;
+            }
+        }
+        System.out.println("Produto não encontrado.");
     }
 
     public static void listarComSubtotalPorCategoria() {
@@ -149,15 +133,23 @@ public class Estoque {
         Map<String, List<Produto>> produtosPorCategoria = new TreeMap<>();
 
         for (Produto produto : produtos) {
-            produtosPorCategoria.computeIfAbsent(produto.categoria, k -> new ArrayList<>()).add(produto);
+            produtosPorCategoria
+                    .computeIfAbsent(produto.categoria, k -> new ArrayList<>())
+                    .add(produto);
         }
 
         double totalGeral = 0.0;
 
-        System.out.println("\nListagem com Subtotal por Categoria: ");
-        for (Map.Entry<String, List<Produto>> entry : produtosPorCategoria.entrySet()) {
-            System.out.println("Categoria: " + entry.getKey());
-            double subtotal = entry.getValue().stream().mapToDouble(Produto::calcularSubtotal).sum();
+        System.out.println("\nListagem com Subtotal por Categoria:");
+        for (String categoria : produtosPorCategoria.keySet()) {
+            System.out.println("Categoria: " + categoria);
+            double subtotal = 0.0;
+
+            for (Produto produto : produtosPorCategoria.get(categoria)) {
+                System.out.println(produto);
+                subtotal += produto.calcularSubtotal();
+            }
+
             System.out.println("Subtotal: R$ " + subtotal);
             totalGeral += subtotal;
         }
